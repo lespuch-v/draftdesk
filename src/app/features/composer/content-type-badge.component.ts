@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ContentAnalysis, ContentType } from '../../core/models/content-type.model';
+import { ContentAnalysis, ContentType } from '../../core/models';
 
 @Component({
   selector: 'app-content-type-badge',

@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Variation } from '../../core/models/variation.model';
+import { Variation } from '../../core/models';
 import { AI_PROVIDERS } from '../../core/constants/ai-providers.constants';
 import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContentAnalysis, ContentType } from '../models/content-type.model';
+import { ContentAnalysis, ContentType } from '../models';
 import { TwitterUtilsService } from './twitter-utils.service';
 
 @Injectable({

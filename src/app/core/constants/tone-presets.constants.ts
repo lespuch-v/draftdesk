@@ -1,4 +1,4 @@
-import { ToneConfig, TonePreset } from '../models/tone-preset.model';
+import { ToneConfig, TonePreset } from '../models';
 
 export const TONE_CONFIGS: Record<TonePreset, ToneConfig> = {
   professional: {

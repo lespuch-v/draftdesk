@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AIProviderType, AIRequest, AIResponse } from '../../models/ai-provider.model';
+import { AIProviderType, AIRequest, AIResponse } from '../../models';
 
 export abstract class AIProviderService {
   abstract readonly providerId: AIProviderType;

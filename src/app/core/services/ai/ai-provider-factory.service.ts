@@ -4,7 +4,7 @@ import { AIProviderService } from './ai-provider.service';
 import { GeminiService } from './gemini.service';
 import { OpenAIService } from './openai.service';
 import { DeepSeekService } from './deepseek.service';
-import { AIProviderType, AIRequest, AIResponse } from '../../models/ai-provider.model';
+import { AIProviderType, AIRequest, AIResponse } from '../../models';
 import { ApiKeyService } from '../api-key.service';
 import { AIModelService } from '../ai-model.service';
 import { AI_PROVIDERS, AI_PROVIDER_OPTIONS } from '../../constants/ai-providers.constants';

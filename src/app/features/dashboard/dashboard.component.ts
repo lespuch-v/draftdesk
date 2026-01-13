@@ -6,8 +6,7 @@ import { ThreadPreviewComponent } from '../thread-preview/thread-preview.compone
 import { SettingsComponent } from '../settings/settings.component';
 import { TwitterUtilsService } from '../../core/services/twitter-utils.service';
 import { ContentDetectorService } from '../../core/services/content-detector.service';
-import { ContentAnalysis } from '../../core/models/content-type.model';
-import { Variation } from '../../core/models/variation.model';
+import { ContentAnalysis, Variation } from '../../core/models';
 
 @Component({
   selector: 'app-dashboard',

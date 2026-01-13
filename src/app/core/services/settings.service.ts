@@ -1,8 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { AppSettings, DEFAULT_SETTINGS } from '../models/settings.model';
+import { AppSettings, DEFAULT_SETTINGS, TonePreset, AIProviderType } from '../models';
 import { StorageService } from './storage.service';
-import { TonePreset } from '../models/tone-preset.model';
-import { AIProviderType } from '../models/ai-provider.model';
 
 const SETTINGS_KEY = 'app_settings';
 

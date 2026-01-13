@@ -8,10 +8,7 @@ import { AIProviderFactoryService } from '../../core/services/ai/ai-provider-fac
 import { ApiKeyService } from '../../core/services/api-key.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { TwitterUtilsService } from '../../core/services/twitter-utils.service';
-import { TonePreset } from '../../core/models/tone-preset.model';
-import { AIProviderType } from '../../core/models/ai-provider.model';
-import { ContentAnalysis } from '../../core/models/content-type.model';
-import { Variation } from '../../core/models/variation.model';
+import { TonePreset, AIProviderType, ContentAnalysis, Variation } from '../../core/models';
 
 @Component({
   selector: 'app-ai-playground',

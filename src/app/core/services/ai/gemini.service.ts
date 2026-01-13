@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { AIProviderService } from './ai-provider.service';
-import { AIProviderType, AIRequest, AIResponse } from '../../models/ai-provider.model';
+import { AIProviderType, AIRequest, AIResponse } from '../../models';
 import { TONE_CONFIGS } from '../../constants/tone-presets.constants';
 import { AI_ENDPOINTS, AI_PROVIDER_MODEL_DEFAULTS } from '../../constants/ai-providers.constants';
 

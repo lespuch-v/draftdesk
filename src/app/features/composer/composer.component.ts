@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CharacterCounterComponent } from './character-counter.component';
 import { ContentTypeBadgeComponent } from './content-type-badge.component';
-import { ContentAnalysis } from '../../core/models/content-type.model';
+import { ContentAnalysis } from '../../core/models';
 import { TwitterUtilsService } from '../../core/services/twitter-utils.service';
 
 @Component({

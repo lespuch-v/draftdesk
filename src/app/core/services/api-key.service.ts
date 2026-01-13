@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { AIProviderType } from '../models/ai-provider.model';
+import { AIProviderType } from '../models';
 import { AI_PROVIDERS } from '../constants/ai-providers.constants';
 import { StorageService } from './storage.service';
 

@@ -1,4 +1,4 @@
-import { AIProvider, AIProviderType } from '../models/ai-provider.model';
+import { AIProvider, AIProviderType } from '../models';
 
 export const AI_PROVIDERS: Record<AIProviderType, AIProvider> = {
   gemini: {

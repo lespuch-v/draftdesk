@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AIProviderType } from '../../core/models/ai-provider.model';
+import { AIProviderType } from '../../core/models';
 import { AI_PROVIDERS, AI_PROVIDER_OPTIONS } from '../../core/constants/ai-providers.constants';
 import { ApiKeyService } from '../../core/services/api-key.service';
 

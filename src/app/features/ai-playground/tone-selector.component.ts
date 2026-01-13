@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TonePreset } from '../../core/models/tone-preset.model';
+import { TonePreset } from '../../core/models';
 import { TONE_CONFIGS, TONE_OPTIONS } from '../../core/constants/tone-presets.constants';
 
 @Component({

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiKeyService } from '../../core/services/api-key.service';
 import { AIProviderFactoryService } from '../../core/services/ai/ai-provider-factory.service';
 import { AIModelService } from '../../core/services/ai-model.service';
-import { AIProviderType } from '../../core/models/ai-provider.model';
+import { AIProviderType } from '../../core/models';
 import {
   AI_PROVIDERS,
   AI_PROVIDER_MODEL_DEFAULTS,
