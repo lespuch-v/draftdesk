@@ -1,1 +1,264 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   DraftDesk - Writer's Study Design System
+   A warm, intimate creative writing environment
+   ============================================ */
+
+/* Import distinctive typography */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Design System Variables */
+:root {
+  /* Core Palette - Warm Dark Theme */
+  --ink-deep: #0d0b09;
+  --ink-rich: #1a1614;
+  --parchment-dark: #252220;
+  --parchment-mid: #2f2b28;
+  --parchment-light: #3a3632;
+
+  /* Manuscript Cards - Warm cream tones */
+  --manuscript: #faf8f5;
+  --manuscript-alt: #f5f2ed;
+  --manuscript-shadow: rgba(250, 248, 245, 0.03);
+
+  /* Accent - Warm amber lamp light */
+  --amber: #d4a853;
+  --amber-glow: #e8c068;
+  --amber-deep: #b8923f;
+  --amber-soft: rgba(212, 168, 83, 0.15);
+  --amber-hint: rgba(212, 168, 83, 0.08);
+
+  /* Text hierarchy */
+  --text-bright: #faf8f5;
+  --text-primary: #e8e4de;
+  --text-secondary: #a8a29e;
+  --text-muted: #6b6560;
+  --text-dark: #1a1614;
+  --text-dark-secondary: #57534e;
+
+  /* Borders */
+  --border-subtle: rgba(168, 162, 158, 0.12);
+  --border-visible: rgba(168, 162, 158, 0.2);
+  --border-manuscript: rgba(26, 22, 20, 0.08);
+
+  /* Status colors - muted, sophisticated */
+  --success: #7cb87c;
+  --success-soft: rgba(124, 184, 124, 0.15);
+  --warning: #d4a853;
+  --warning-soft: rgba(212, 168, 83, 0.15);
+  --error: #c97c7c;
+  --error-soft: rgba(201, 124, 124, 0.15);
+
+  /* Tone colors - refined palette */
+  --tone-professional: #8b9dc3;
+  --tone-casual: #7cb87c;
+  --tone-viral: #d47c7c;
+  --tone-concise: #7cb8c9;
+  --tone-humorous: #d4a853;
+
+  /* Shadows - warm and atmospheric */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 40px rgba(212, 168, 83, 0.15);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 1px rgba(250, 248, 245, 0.1);
+
+  /* Border radius - slightly more refined */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Transitions - smooth and refined */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Base styles */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink-deep);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Ambient background texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 168, 83, 0.06), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(212, 168, 83, 0.04), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.015;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* Selection */
+::selection {
+  background: var(--amber-soft);
+  color: var(--text-bright);
+}
+
+/* Button reset */
+button {
+  font-family: var(--font-body);
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Input reset */
+input,
+textarea,
+select {
+  font-family: var(--font-body);
+  font-size: inherit;
+  background: transparent;
+  border: none;
+}
+
+/* Link reset */
+a {
+  color: var(--amber);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--amber-glow);
+}
+
+/* Custom scrollbar - refined and subtle */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ink-rich);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--parchment-mid);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--ink-rich);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--parchment-light);
+}
+
+/* Utility classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(212, 168, 83, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(212, 168, 83, 0.35); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes typewriter-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Glass morphism utility */
+.glass {
+  background: rgba(26, 22, 20, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Manuscript card base style */
+.manuscript-card {
+  background: var(--manuscript);
+  color: var(--text-dark);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
