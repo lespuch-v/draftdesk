@@ -33,6 +33,13 @@ export interface AIRequest {
   variationCount: number;
 }
 
+export interface AIShortenRequest {
+  content: string;
+  tone: TonePreset;
+  contentType: ContentType;
+  targetLength: number;
+}
+
 export interface AIResponse {
   variation: string;
   provider: AIProviderType;
@@ -52,6 +59,7 @@ export interface Variation {
   threadParts?: string[];
   createdAt: Date;
   isSelected: boolean;
+  isShortening?: boolean;
 }
 
 export interface AppSettings {

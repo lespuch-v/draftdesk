@@ -99,6 +99,7 @@ import { TonePreset, AIProviderType, ContentAnalysis, Variation } from '../../co
                     [variation]="variation"
                     [style.animation-delay]="i * 80 + 'ms'"
                     (use)="onUseVariation($event)"
+                    (shorten)="onShortenVariation($event)"
                   />
                 }
               </div>
@@ -313,15 +314,16 @@ import { TonePreset, AIProviderType, ContentAnalysis, Variation } from '../../co
     /* Variations grid */
     .variations-scroll {
       flex: 1;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .variations-grid {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1rem;
       padding: 1.25rem;
-      min-height: 100%;
+      align-content: start;
     }
 
     /* Empty state */
@@ -415,10 +417,12 @@ export class AiPlaygroundComponent {
 
   onToneChange(tone: TonePreset): void {
     this.selectedTone.set(tone);
+    this.settingsService.setDefaultTone(tone);
   }
 
   onProviderChange(provider: AIProviderType | 'all'): void {
     this.selectedProvider.set(provider);
+    this.settingsService.setDefaultProvider(provider);
   }
 
   onCountChange(count: number): void {
@@ -472,5 +476,64 @@ export class AiPlaygroundComponent {
 
   onUseVariation(variation: Variation): void {
     this.variationSelected.emit(variation);
+  }
+
+  onShortenVariation(event: { variation: Variation; targetLength: number }): void {
+    const { variation, targetLength } = event;
+
+    this.variations.update((current) =>
+      current.map((item) =>
+        item.id === variation.id ? { ...item, isShortening: true } : item
+      )
+    );
+
+    const request = {
+      content: variation.polishedContent,
+      tone: variation.tone,
+      contentType: this.contentAnalysis.type,
+      targetLength,
+    };
+
+    this.aiFactory.shortenContent(request, variation.provider).subscribe({
+      next: (response) => {
+        if (!response) {
+          this.clearShorteningState(variation.id);
+          return;
+        }
+
+        const characterCount = this.twitterUtils.countCharacters(response.variation);
+        const isOverLimit = characterCount > this.twitterUtils.MAX_TWEET_LENGTH;
+        const threadParts = isOverLimit
+          ? this.twitterUtils.splitIntoThread(response.variation)
+          : undefined;
+
+        this.variations.update((current) =>
+          current.map((item) =>
+            item.id === variation.id
+              ? {
+                  ...item,
+                  polishedContent: response.variation,
+                  characterCount,
+                  isOverLimit,
+                  threadParts,
+                  isShortening: false,
+                }
+              : item
+          )
+        );
+      },
+      error: (error) => {
+        console.error('Error shortening variation:', error);
+        this.clearShorteningState(variation.id);
+      },
+    });
+  }
+
+  private clearShorteningState(variationId: string): void {
+    this.variations.update((current) =>
+      current.map((item) =>
+        item.id === variationId ? { ...item, isShortening: false } : item
+      )
+    );
   }
 }

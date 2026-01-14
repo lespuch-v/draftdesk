@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { AIProviderService } from './ai-provider.service';
-import { AIProviderType, AIRequest, AIResponse } from '../../models';
+import { AIProviderType, AIRequest, AIResponse, AIShortenRequest } from '../../models';
 import { TONE_CONFIGS } from '../../constants/tone-presets.constants';
 import { AI_ENDPOINTS, AI_PROVIDER_MODEL_DEFAULTS } from '../../constants/ai-providers.constants';
 
@@ -44,6 +44,50 @@ export class GeminiService extends AIProviderService {
       generationConfig: {
         temperature: 0.7,
         maxOutputTokens: 500,
+      },
+    };
+
+    return this.http.post<GeminiResponse>(url, body).pipe(
+      map((response) => {
+        const text = response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        return {
+          variation: text.trim(),
+          provider: this.providerId,
+          tone: request.tone,
+          generatedAt: new Date(),
+          characterCount: text.trim().length,
+        };
+      })
+    );
+  }
+
+  shortenContent(
+    request: AIShortenRequest,
+    apiKey: string,
+    model: string
+  ): Observable<AIResponse> {
+    const toneConfig = TONE_CONFIGS[request.tone];
+    const systemPrompt = this.buildShortenPrompt(
+      toneConfig.systemPrompt,
+      request.contentType,
+      request.targetLength
+    );
+
+    const resolvedModel = model?.trim() || AI_PROVIDER_MODEL_DEFAULTS.gemini;
+    const url = `${AI_ENDPOINTS.gemini}/${resolvedModel}:generateContent?key=${apiKey}`;
+    const body = {
+      contents: [
+        {
+          parts: [
+            {
+              text: `${systemPrompt}\n\nText to shorten: ${request.content}`,
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.5,
+        maxOutputTokens: 300,
       },
     };
 

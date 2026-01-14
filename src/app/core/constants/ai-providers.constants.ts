@@ -34,7 +34,7 @@ export const AI_PROVIDER_MODEL_DEFAULTS: Record<AIProviderType, string> = {
 
 export const AI_PROVIDER_MODEL_OPTIONS: Record<AIProviderType, string[]> = {
   gemini: ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-3-flash-preview'],
-  openai: ['gpt-4o-mini', 'gpt-4o'],
+  openai: ['gpt-5.2', 'gpt-4o'],
   deepseek: ['deepseek-chat', 'deepseek-reasoner'],
 };
 
@@ -47,5 +47,6 @@ export const AI_PROVIDER_MODEL_STORAGE_KEYS: Record<AIProviderType, string> = {
 export const AI_ENDPOINTS = {
   gemini: 'https://generativelanguage.googleapis.com/v1beta/models',
   openai: 'https://api.openai.com/v1/chat/completions',
+  openaiResponses: 'https://api.openai.com/v1/responses',
   deepseek: 'https://api.deepseek.com/v1/chat/completions',
 } as const;

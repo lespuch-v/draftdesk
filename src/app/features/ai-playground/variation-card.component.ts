@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Variation } from '../../core/models';
 import { AI_PROVIDERS } from '../../core/constants/ai-providers.constants';
 import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
+import { TWITTER_CONSTANTS } from '../../core/constants/twitter.constants';
 
 @Component({
   selector: 'app-variation-card',
@@ -26,6 +27,23 @@ import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
         <p>{{ variation.polishedContent }}</p>
       </div>
 
+      <div class="shorten-controls">
+        <label class="shorten-label">Target length</label>
+        <div class="length-input">
+          <input
+            type="number"
+            class="length-field"
+            [min]="minTargetLength"
+            [max]="maxTargetLength"
+            [step]="lengthStep"
+            [value]="targetLength"
+            [disabled]="variation.isShortening"
+            (input)="onTargetLengthInput($event)"
+          />
+          <span class="length-unit">chars</span>
+        </div>
+      </div>
+
       <div class="card-actions">
         <button class="action-btn copy-btn" (click)="copyToClipboard()" [class.copied]="copied">
           @if (copied) {
@@ -39,6 +57,23 @@ import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
             </svg>
             <span>Copy</span>
+          }
+        </button>
+        <button
+          class="action-btn shorten-btn"
+          (click)="requestShorten()"
+          [disabled]="variation.isShortening"
+        >
+          @if (variation.isShortening) {
+            <div class="mini-spinner"></div>
+            <span>Shortening...</span>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="7" x2="20" y2="7"></line>
+              <line x1="4" y1="12" x2="14" y2="12"></line>
+              <line x1="4" y1="17" x2="18" y2="17"></line>
+            </svg>
+            <span>Shorten</span>
           }
         </button>
         <button class="action-btn use-btn" (click)="useVariation()">
@@ -58,13 +93,25 @@ import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
       box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.2),
         0 0 0 1px rgba(250, 248, 245, 0.08);
-      min-width: 300px;
-      max-width: 340px;
-      flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      animation: slideInRight 0.4s ease both;
+      animation: slideUp 0.4s ease both;
       transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .variation-card:hover {
@@ -141,6 +188,73 @@ import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
       word-break: break-word;
     }
 
+    .variation-card ::selection {
+      background: var(--amber);
+      color: var(--ink-deep);
+    }
+
+    .variation-card ::-moz-selection {
+      background: var(--amber);
+      color: var(--ink-deep);
+    }
+
+    .shorten-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.625rem 1rem;
+      background: rgba(0, 0, 0, 0.02);
+      border-top: 1px solid var(--border-manuscript);
+    }
+
+    .shorten-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .length-input {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.5rem;
+      background: white;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--radius-sm);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .length-input:focus-within {
+      border-color: rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+    }
+
+    .length-field {
+      width: 64px;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-align: right;
+    }
+
+    .length-field:disabled {
+      color: var(--text-muted);
+      background: transparent;
+      cursor: not-allowed;
+    }
+
+    .length-unit {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
     .card-actions {
       display: flex;
       gap: 0.5rem;
@@ -177,6 +291,17 @@ import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
       color: var(--text-dark);
     }
 
+    .action-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .shorten-btn {
+      background: white;
+      color: var(--text-dark-secondary);
+    }
+
     .use-btn {
       background: var(--amber);
       color: var(--ink-deep);
@@ -193,13 +318,27 @@ import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
       color: white;
       border-color: var(--success);
     }
+
+    .mini-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
   `],
 })
 export class VariationCardComponent {
   @Input() variation!: Variation;
   @Output() use = new EventEmitter<Variation>();
+  @Output() shorten = new EventEmitter<{ variation: Variation; targetLength: number }>();
 
   copied = false;
+  targetLength = 180;
+  readonly minTargetLength = 80;
+  readonly maxTargetLength = TWITTER_CONSTANTS.MAX_TWEET_LENGTH;
+  readonly lengthStep = 10;
 
   getProviderName(): string {
     return AI_PROVIDERS[this.variation.provider]?.name || this.variation.provider;
@@ -230,5 +369,22 @@ export class VariationCardComponent {
 
   useVariation(): void {
     this.use.emit(this.variation);
+  }
+
+  onTargetLengthInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    if (!input) return;
+    const rawValue = Number.parseInt(input.value, 10);
+    if (Number.isNaN(rawValue)) return;
+    this.targetLength = this.clampTargetLength(rawValue);
+    input.value = String(this.targetLength);
+  }
+
+  requestShorten(): void {
+    this.shorten.emit({ variation: this.variation, targetLength: this.targetLength });
+  }
+
+  private clampTargetLength(value: number): number {
+    return Math.max(this.minTargetLength, Math.min(this.maxTargetLength, value));
   }
 }

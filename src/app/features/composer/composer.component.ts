@@ -151,6 +151,16 @@ import { TwitterUtilsService } from '../../core/services/twitter-utils.service';
       opacity: 0.4;
     }
 
+    .composer-textarea::selection {
+      background: var(--amber);
+      color: var(--ink-deep);
+    }
+
+    .composer-textarea::-moz-selection {
+      background: var(--amber);
+      color: var(--ink-deep);
+    }
+
     /* Typewriter cursor effect */
     .typing-indicator {
       position: absolute;
