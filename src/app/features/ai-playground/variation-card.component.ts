@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Variation } from '../../core/models';
 import { AI_PROVIDERS } from '../../core/constants/ai-providers.constants';
 import { TONE_CONFIGS } from '../../core/constants/tone-presets.constants';
-import { TWITTER_CONSTANTS } from '../../core/constants/twitter.constants';
 
 @Component({
   selector: 'app-variation-card',
@@ -25,23 +24,6 @@ import { TWITTER_CONSTANTS } from '../../core/constants/twitter.constants';
 
       <div class="card-content">
         <p>{{ variation.polishedContent }}</p>
-      </div>
-
-      <div class="shorten-controls">
-        <label class="shorten-label">Target length</label>
-        <div class="length-input">
-          <input
-            type="number"
-            class="length-field"
-            [min]="minTargetLength"
-            [max]="maxTargetLength"
-            [step]="lengthStep"
-            [value]="targetLength"
-            [disabled]="variation.isShortening"
-            (input)="onTargetLengthInput($event)"
-          />
-          <span class="length-unit">chars</span>
-        </div>
       </div>
 
       <div class="card-actions">
@@ -198,63 +180,6 @@ import { TWITTER_CONSTANTS } from '../../core/constants/twitter.constants';
       color: var(--ink-deep);
     }
 
-    .shorten-controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.625rem 1rem;
-      background: rgba(0, 0, 0, 0.02);
-      border-top: 1px solid var(--border-manuscript);
-    }
-
-    .shorten-label {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .length-input {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      padding: 0.25rem 0.5rem;
-      background: white;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: var(--radius-sm);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    }
-
-    .length-input:focus-within {
-      border-color: rgba(0, 0, 0, 0.2);
-      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
-    }
-
-    .length-field {
-      width: 64px;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      text-align: right;
-    }
-
-    .length-field:disabled {
-      color: var(--text-muted);
-      background: transparent;
-      cursor: not-allowed;
-    }
-
-    .length-unit {
-      font-size: 0.6875rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
     .card-actions {
       display: flex;
       gap: 0.5rem;
@@ -332,13 +257,9 @@ import { TWITTER_CONSTANTS } from '../../core/constants/twitter.constants';
 export class VariationCardComponent {
   @Input() variation!: Variation;
   @Output() use = new EventEmitter<Variation>();
-  @Output() shorten = new EventEmitter<{ variation: Variation; targetLength: number }>();
+  @Output() shorten = new EventEmitter<Variation>();
 
   copied = false;
-  targetLength = 180;
-  readonly minTargetLength = 80;
-  readonly maxTargetLength = TWITTER_CONSTANTS.MAX_TWEET_LENGTH;
-  readonly lengthStep = 10;
 
   getProviderName(): string {
     return AI_PROVIDERS[this.variation.provider]?.name || this.variation.provider;
@@ -371,20 +292,7 @@ export class VariationCardComponent {
     this.use.emit(this.variation);
   }
 
-  onTargetLengthInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    if (!input) return;
-    const rawValue = Number.parseInt(input.value, 10);
-    if (Number.isNaN(rawValue)) return;
-    this.targetLength = this.clampTargetLength(rawValue);
-    input.value = String(this.targetLength);
-  }
-
   requestShorten(): void {
-    this.shorten.emit({ variation: this.variation, targetLength: this.targetLength });
-  }
-
-  private clampTargetLength(value: number): number {
-    return Math.max(this.minTargetLength, Math.min(this.maxTargetLength, value));
+    this.shorten.emit(this.variation);
   }
 }

@@ -34,7 +34,7 @@ export const AI_PROVIDER_MODEL_DEFAULTS: Record<AIProviderType, string> = {
 
 export const AI_PROVIDER_MODEL_OPTIONS: Record<AIProviderType, string[]> = {
   gemini: ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-3-flash-preview'],
-  openai: ['gpt-5.2', 'gpt-4o'],
+  openai: ['gpt-5.2', 'gpt-5-mini-2025-08-07'],
   deepseek: ['deepseek-chat', 'deepseek-reasoner'],
 };
 

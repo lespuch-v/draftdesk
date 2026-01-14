@@ -22,6 +22,10 @@ interface OpenAIResponsesResponse {
       text?: string;
     }>;
   }>;
+  status?: string;
+  incomplete_details?: {
+    reason?: string;
+  };
 }
 
 @Injectable({
@@ -49,14 +53,22 @@ export class OpenAIService extends AIProviderService {
         model,
         systemPrompt,
         `Original text: ${request.content}`,
-        500
+        800
       );
 
       return this.http
         .post<OpenAIResponsesResponse>(AI_ENDPOINTS.openaiResponses, body, { headers })
         .pipe(
           map((response) => {
+            console.log('[OpenAI Responses] raw response', response);
             const text = this.extractResponsesText(response);
+            if (!text) {
+              console.warn('[OpenAI Responses] empty output', {
+                status: response.status,
+                reason: response.incomplete_details?.reason,
+              });
+            }
+            console.log('[OpenAI Responses] extracted text', text);
             return {
               variation: text,
               provider: this.providerId,
@@ -80,7 +92,9 @@ export class OpenAIService extends AIProviderService {
 
     return this.http.post<OpenAIResponse>(AI_ENDPOINTS.openai, body, { headers }).pipe(
       map((response) => {
+        console.log('[OpenAI Chat] raw response', response);
         const text = response.choices?.[0]?.message?.content?.trim() || '';
+        console.log('[OpenAI Chat] extracted text', text);
         return {
           variation: text,
           provider: this.providerId,
@@ -114,14 +128,22 @@ export class OpenAIService extends AIProviderService {
         model,
         systemPrompt,
         `Text to shorten: ${request.content}`,
-        300
+        400
       );
 
       return this.http
         .post<OpenAIResponsesResponse>(AI_ENDPOINTS.openaiResponses, body, { headers })
         .pipe(
           map((response) => {
+            console.log('[OpenAI Responses] raw response', response);
             const text = this.extractResponsesText(response);
+            if (!text) {
+              console.warn('[OpenAI Responses] empty output', {
+                status: response.status,
+                reason: response.incomplete_details?.reason,
+              });
+            }
+            console.log('[OpenAI Responses] extracted text', text);
             return {
               variation: text,
               provider: this.providerId,
@@ -145,7 +167,9 @@ export class OpenAIService extends AIProviderService {
 
     return this.http.post<OpenAIResponse>(AI_ENDPOINTS.openai, body, { headers }).pipe(
       map((response) => {
+        console.log('[OpenAI Chat] raw response', response);
         const text = response.choices?.[0]?.message?.content?.trim() || '';
+        console.log('[OpenAI Chat] extracted text', text);
         return {
           variation: text,
           provider: this.providerId,
@@ -199,11 +223,14 @@ export class OpenAIService extends AIProviderService {
       return directText;
     }
 
-    const content = response.output?.[0]?.content || [];
-    for (const item of content) {
-      const text = item?.text?.trim();
-      if (text) {
-        return text;
+    const outputs = response.output || [];
+    for (const output of outputs) {
+      const content = output?.content || [];
+      for (const item of content) {
+        const text = item?.text?.trim();
+        if (text) {
+          return text;
+        }
       }
     }
 
@@ -222,11 +249,21 @@ export class OpenAIService extends AIProviderService {
       instructions?: string;
       input: string;
       max_output_tokens: number;
+      reasoning?: {
+        effort: 'low' | 'medium' | 'high';
+      };
+      text?: {
+        format: {
+          type: 'text';
+        };
+      };
       temperature?: number;
     } = {
       model,
       input,
       max_output_tokens: maxOutputTokens,
+      reasoning: { effort: 'low' },
+      text: { format: { type: 'text' } },
     };
 
     if (instructions?.trim()) {

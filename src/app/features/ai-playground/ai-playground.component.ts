@@ -78,6 +78,16 @@ import { TonePreset, AIProviderType, ContentAnalysis, Variation } from '../../co
 
         <!-- Variations Section -->
         <div class="variations-section">
+          @if (errorMessage()) {
+            <div class="error-banner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="7" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>{{ errorMessage() }}</span>
+            </div>
+          }
           @if (variations().length > 0) {
             <div class="variations-header">
               <div class="variations-info">
@@ -259,6 +269,24 @@ import { TonePreset, AIProviderType, ContentAnalysis, Variation } from '../../co
       overflow: hidden;
     }
 
+    .error-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1rem 1.25rem 0;
+      padding: 0.75rem 1rem;
+      background: var(--error-soft);
+      color: var(--error);
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+    }
+
+    .error-banner svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
     .variations-header {
       display: flex;
       justify-content: space-between;
@@ -390,6 +418,8 @@ export class AiPlaygroundComponent {
   variationCount = signal(3);
   variations = signal<Variation[]>([]);
   isLoading = signal(false);
+  errorMessage = signal<string | null>(null);
+  private readonly defaultTargetLength = 180;
 
   constructor(
     private aiFactory: AIProviderFactoryService,
@@ -433,6 +463,7 @@ export class AiPlaygroundComponent {
     if (!this.canGenerate() || this.isLoading()) return;
 
     this.isLoading.set(true);
+    this.errorMessage.set(null);
 
     const request = {
       content: this.content,
@@ -445,6 +476,16 @@ export class AiPlaygroundComponent {
       .generateMultipleVariations(request, this.variationCount(), this.selectedProvider())
       .subscribe({
         next: (responses) => {
+          if (responses.length === 0) {
+            const providerLabel =
+              this.selectedProvider() === 'all' ? 'providers' : this.selectedProvider();
+            this.errorMessage.set(
+              `No response from ${providerLabel}. Check your API key or model access.`
+            );
+            this.isLoading.set(false);
+            return;
+          }
+
           const newVariations: Variation[] = responses.map((response, index) => ({
             id: `${Date.now()}-${index}`,
             originalContent: this.content,
@@ -461,9 +502,13 @@ export class AiPlaygroundComponent {
           }));
 
           this.variations.update((current) => [...newVariations, ...current]);
+          this.errorMessage.set(null);
           this.isLoading.set(false);
         },
         error: (error) => {
+          const apiMessage = error?.error?.error?.message;
+          const message = apiMessage || error?.message || 'Unknown error';
+          this.errorMessage.set(`Request failed: ${message}`);
           console.error('Error generating variations:', error);
           this.isLoading.set(false);
         },
@@ -478,9 +523,8 @@ export class AiPlaygroundComponent {
     this.variationSelected.emit(variation);
   }
 
-  onShortenVariation(event: { variation: Variation; targetLength: number }): void {
-    const { variation, targetLength } = event;
-
+  onShortenVariation(variation: Variation): void {
+    const targetLength = this.defaultTargetLength;
     this.variations.update((current) =>
       current.map((item) =>
         item.id === variation.id ? { ...item, isShortening: true } : item
